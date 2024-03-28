@@ -10,5 +10,5 @@ console.log(process.env.PORT);
 
 // Server listen
 app.listen(5000,() => {
-    console.log("Server is working")
+    console.log(`Server is working on port: ${process.env.PORT} in ${process.env.NODE_ENV} Mode`)
 })

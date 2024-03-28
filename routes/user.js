@@ -1,23 +1,12 @@
 import express from "express";
-import { deleteUser, getAllUsers, getUserById, register, special, updateUser } from "../controllers/user.js";
+import {getMyProfile, login, logout, register} from "../controllers/user.js";
+import { isAuthenticated } from "../middelwares/auth.js";
 
 const router = express.Router();
 
-router.get("/all", getAllUsers);
-
 router.post("/new", register);
+router.post("/login", login);
+router.get("/logout", logout);
+router.get("/me",isAuthenticated,getMyProfile)
 
-router.get("/userid/special",special)
-
-// Dynamic URL
-// router.get("/userid/:id", getUserById)
-// router.put("/userid/:id", updateUser)
-// router.delete("/userid/:id", deleteUser)
-
-// chaining above 3 routers due to same route
-
-router.route("/userid/:id").get(getUserById).put(updateUser).delete(deleteUser);
-
-
-
-export default router
+export default router;
