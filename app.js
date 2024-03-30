@@ -1,10 +1,9 @@
 import express, { Router } from "express";
 
-// User Router import
+// Router import
 import userRouter from "./routes/user.js"
-
-// Task Router import
-import taskRouter from "./routes/task.js"
+import placeRouter from "./routes/place.js";
+import tripRouter from "./routes/trip.js";
 
 import {config} from "dotenv"
 import cookieParser from "cookie-parser";
@@ -35,7 +34,8 @@ app.use(cors({
 
 // Using Routes by Importing Router
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/task", taskRouter); 
+app.use("/api/v1/place", placeRouter);
+app.use("/api/v1/trip", tripRouter);
 
 
 app.get("/", (req,res) => {

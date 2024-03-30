@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { sendCookie } from "../utils/features.js";
 import ErrorHandler from "../middelwares/error.js";
 
-export const login = async(req,res, next) => {
+export const login = async(req,res,next) => {
     try {
         const {email, password} = req.body;
 
@@ -23,7 +23,7 @@ export const login = async(req,res, next) => {
 
 
 // New User Registration
-export const register = async (req,res) => {
+export const register = async (req,res, next) => {
     try {
         const {name, email, password} = req.body;
 

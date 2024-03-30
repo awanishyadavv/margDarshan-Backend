@@ -4,10 +4,10 @@ import mongoose from "mongoose";
 
 export const connectDB = () => {
     mongoose.connect(process.env.MONGO_URI, {
-        dbName: "backendapi",
+        dbName: "margDarshanDatabase",
     })
         .then(() => console.log("Database Connected"))
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error)); 
 }
 
 
