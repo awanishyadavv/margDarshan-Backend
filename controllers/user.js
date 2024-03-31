@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import { sendCookie } from "../utils/features.js";
 import ErrorHandler from "../middelwares/error.js";
 
+
+
+
 export const login = async(req,res,next) => {
     try {
         const {email, password} = req.body;
@@ -25,7 +28,7 @@ export const login = async(req,res,next) => {
 // New User Registration
 export const register = async (req,res, next) => {
     try {
-        const {name, email, password} = req.body;
+        const {name, email, password, phone} = req.body;
 
     let user = await User.findOne({email});
 
@@ -35,7 +38,7 @@ export const register = async (req,res, next) => {
     // Encrypt Password
     const hashedPassword = await bcrypt.hash(password,10)
 
-    user = await User.create({name,email,password:hashedPassword});
+    user = await User.create({name,email,password:hashedPassword, phone});
 
     sendCookie(user, res, "Registerd Successfully", 201);
     } catch (error) {
@@ -43,13 +46,14 @@ export const register = async (req,res, next) => {
     }
 };
 
-
+// Get User Profile
 export const getMyProfile = (req,res) => {
     res.status(200).json({
         success:true,
         user:req.user,
     })
 };
+
 
 export const logout = (req,res) =>{
     res
@@ -63,3 +67,63 @@ export const logout = (req,res) =>{
         user:req.user,
     })
 }
+
+
+// Functionallities for Admin's
+// Get all users for admin and super admin
+export const getAllUserforAdmin = async(req, res, next) => {
+    try {
+        const places = await User.find({});
+        res.status(201).json({
+            success:true,
+            places,
+        })
+    } catch (error) {
+        next(error)
+    }
+};
+
+
+// Update User Rols and Is Verified status
+export const updateUserRoleAndStatus = async(req, res, next) => {
+    try {
+        const {userId} = req.params;
+        const  {role, isVerified } = req.body;
+
+        const user = await User.findById(userId);
+        if(!user) return next(new ErrorHandler("User not Found", 404))
+
+        if (role) user.role = role;
+        if (typeof isVerified === 'boolean') user.isVerified = isVerified;
+
+        await user.save();
+        res.status(201).json({
+            success: true,
+            message:"User Updated",
+            user,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+};
+
+// Update User Rols and Is Verified status
+export const deleteUser = async(req, res, next) => {
+    try {
+        const {userId} = req.params;
+    
+        const user = await User.findById(userId);
+
+        if(!user) return next(new ErrorHandler("User not Found", 404))
+    
+        await user.deleteOne();
+    
+        res.status(201).json({      
+            success:true,
+            message:"User Deleted"
+        })
+        } catch (error) {
+            next(error)
+        }
+};

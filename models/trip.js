@@ -46,6 +46,11 @@ const tripSchema = new mongoose.Schema({
         type: [tripItemSchema],
         required: true
     },
+    isPublic: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

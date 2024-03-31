@@ -4,7 +4,7 @@ import ErrorHandler from "../middelwares/error.js";
 // Add new Trip
 export const newTrip = async (req, res, next) => {
     try {
-        const { tripName, tripItems } = req.body;
+        const { tripName, tripItems , isPublic} = req.body;
 
         let tripExistance = await Trip.findOne({tripName});
 
@@ -19,6 +19,7 @@ export const newTrip = async (req, res, next) => {
         const tripData = {
             tripName,
             tripItems,
+            isPublic,
             user: req.user // Assuming req.user contains the user ID
         };
 
@@ -38,9 +39,20 @@ export const newTrip = async (req, res, next) => {
 export const myTrips = async (req, res, next) => {
     try {
         const userid = req.user._id;
-    
         const trips = await Trip.find({user:userid});
-    
+        res.status(201).json({
+            success:true,
+            trips,
+        })
+       } catch (error) {
+        next(error)
+       }
+};
+
+// Get all Trips
+export const publicTrips = async (req, res, next) => {
+    try {
+        const trips = await Trip.find({isPublic:true});
         res.status(201).json({
             success:true,
             trips,
@@ -55,9 +67,13 @@ export const myTrips = async (req, res, next) => {
 export const updateTrip = async (req, res, next) => {
     try {
         const { tripId } = req.params;
-        const { tripName, tripItems } = req.body;
+        const { tripName, tripItems, isPublic } = req.body;
 
         let trip = await Trip.findById(tripId);
+        let checkTripName = await Trip.findOne({tripName});
+
+        // if(checkTripName) return next(new ErrorHandler("Trip with this name already Exist", 404))
+
         if (!trip) {
             return next(new ErrorHandler("Trip not found", 404));
         }
@@ -68,6 +84,10 @@ export const updateTrip = async (req, res, next) => {
 
         if (tripItems) {
             trip.tripItems = tripItems;
+        }
+
+        if (isPublic) {
+            trip.isPublic = isPublic;
         }
 
         await trip.save();

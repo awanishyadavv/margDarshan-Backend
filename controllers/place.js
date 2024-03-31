@@ -1,6 +1,7 @@
 import { Place } from "../models/place.js";
 import { sendCookie } from "../utils/features.js";
 import ErrorHandler from "../middelwares/error.js";
+import { response } from "express";
 
 
 
@@ -17,7 +18,10 @@ export const newPlace = async(req,res, next) => {
 
     place = await Place.create({placeId, placeName, email, category, subcategory, state, district, status, highlights, bestWeather, transportation, compound, nearbyPlaces, famous});
 
-    sendCookie(place, res,"Added Successfully");
+    res.status(201).json({
+        success:true,
+        message:"Place added Successfully.",
+    })
     } catch (error) {
         next(error)
     }
@@ -80,5 +84,44 @@ export const getPlacesWithSelectedAttributes = async (req, res, next) => {
     }
 };
 
+
+export const updatePlace = async (req, res, next) => {
+    try {
+        const {placeId} = req.params;
+        const { placeName, email, category, subcategory, state, district, status, highlights, bestWeather, transportation, compound, nearbyPlaces, famous } = req.body;
+
+        let place = await Place.findById(placeId);
+
+        if (!place) {
+            return res.status(404).json({
+                success: false,
+                message: "Place not found."
+            });
+        }
+
+        place.placeName = placeName;
+        place.email = email;
+        place.category = category;
+        place.subcategory = subcategory;
+        place.state = state;
+        place.district = district;
+        place.status = status;
+        place.highlights = highlights;
+        place.bestWeather = bestWeather;
+        place.transportation = transportation;
+        place.compound = compound;
+        place.nearbyPlaces = nearbyPlaces;
+        place.famous = famous;
+
+        await place.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Place updated successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 
