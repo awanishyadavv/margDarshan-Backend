@@ -65,6 +65,7 @@ export const logout = (req,res) =>{
     }).json({
         success:true,
         user:req.user,
+        message:"Logged out Successfully",
     })
 }
 
@@ -73,10 +74,10 @@ export const logout = (req,res) =>{
 // Get all users for admin and super admin
 export const getAllUserforAdmin = async(req, res, next) => {
     try {
-        const places = await User.find({});
+        const users = await User.find({});
         res.status(201).json({
             success:true,
-            places,
+            users,
         })
     } catch (error) {
         next(error)

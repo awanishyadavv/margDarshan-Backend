@@ -16,7 +16,7 @@ export const isAuthenticated = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded._id);
 
-    if (req.user.role !== "user") {
+    if (req.user.role !== "user" && req.user.role !== "admin") {
         return res.status(403).json({
             success: false,
             message: "Access denied. User is not authorized."
